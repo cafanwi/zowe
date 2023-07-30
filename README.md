@@ -206,3 +206,39 @@ run test commands:
 zowe --version
 zowe plugins list
 ```
+
+
+***NEXT:*** Authenticate with Zowe:
+Before using the Zowe CLI to interact with mainframe resources, you need to authenticate with Zowe. The specific authentication process will depend on the configuration set up by your mainframe administrator. Commonly, you can use the following command to authenticate:
+
+```
+zowe profiles create mfhost --host <hostname> --user <username> --pass <password>
+```
+
+ After creating the profile, you can switch to it using:
+
+```
+zowe profiles switch mfhost
+```
+
+OPTIONAL: Working with Data Sets:
+
+```
+zowe files list datasets
+zowe files browse data-set "your.dataset.name"
+zowe files download data-set "your.dataset.name" --dest /path/to/local/directory
+zowe files upload file /path/to/local/file "your.dataset.name(member)"
+```
+
+Working with Mainframe Jobs (JCL):
+
+
+```
+zowe jobs submit local-file /path/to/your/jclfile.jcl
+```
+
+Using Zowe CLI Plugins:
+
+```
+zowe cics --help
+```
