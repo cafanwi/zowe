@@ -242,3 +242,26 @@ Using Zowe CLI Plugins:
 ```
 zowe cics --help
 ```
+
+## Write a Gitlab Pipeline stage to connect to mainframe. I have 2 mainframe dummy examples:
+
+```yml
+stages:
+  - connect_to_mainframe
+
+connect_to_mainframe_1:
+  stage: connect_to_mainframe
+  image: my_zowe_image
+  script:
+    - zowe profiles create mfhost1 --host 10.0.0.1 --user macazcol1 --pass "Depay20$"
+    - zowe profiles switch mfhost1
+    # Add more Zowe CLI commands to interact with mainframe 1
+
+connect_to_mainframe_2:
+  stage: connect_to_mainframe
+  image: my_zowe_image
+  script:
+    - zowe profiles create mfhost2 --host 10.0.0.21 --user macazcol2 --pass "Depay21$"
+    - zowe profiles switch mfhost2
+    # Add more Zowe CLI commands to interact with mainframe 2
+```
