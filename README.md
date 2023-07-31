@@ -265,3 +265,58 @@ connect_to_mainframe_2:
     - zowe profiles switch mfhost2
     # Add more Zowe CLI commands to interact with mainframe 2
 ```
+
+```yml
+# Define the stages that will be executed in the CI/CD pipeline.
+stages:
+  - build
+  - test
+  - deploy
+
+# Job to build the Groovy project
+build_groovy:
+  stage: build
+  image: groovy:latest
+  script:
+    - groovy --version  # Display Groovy version
+    # Add any other build commands for the Groovy project here
+
+# Job to build the Java project
+build_java:
+  stage: build
+  image: maven:latest
+  script:
+    - mvn --version  # Display Maven version
+    # Add any other build commands for the Java project here
+
+# Job to run tests for both projects
+test:
+  stage: test
+  image: openjdk:latest
+  script:
+    - groovy --version  # Display Groovy version
+    - mvn --version  # Display Maven version
+    # Add any other test commands for both projects here
+
+# Job to deploy to production
+deploy_to_production:
+  stage: deploy
+  image: ubuntu:latest  # Replace with the appropriate Docker image for your production environment
+  script:
+    # Add deployment commands here, such as copying files to the production server or using deployment tools
+    # Example:
+    - scp groovy-app.jar user@production-server:/path/to/deploy
+
+# Define the deployment environment
+production:
+  stage: deploy
+  script:
+    # Add any post-deployment commands or checks here (e.g., smoke tests, status checks)
+
+# Specify when the deployment should be executed
+# For simplicity, we trigger deployment only after manual approval
+# You can use other triggers, such as on a specific branch or tag
+only:
+  - master  # Deploy only on the master branch
+  - triggers  # Deploy when manually triggered
+```
