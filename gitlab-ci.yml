@@ -1,0 +1,114 @@
+# docker run -it cafanwii/zowe:1.0.0 /bin/bash
+
+stages:
+  - build
+
+variables:
+  ARTIFACTORY_REGISTRY: https://your-artifactory-url/artifactory
+  ARTIFACTORY_REPO: docker-repo
+  ARTIFACTORY_USERNAME: your-artifactory-username
+  ARTIFACTORY_PASSWORD: your-artifactory-password
+
+build:
+  stage: build
+  image: docker:20.10.7
+  services:
+    - docker:20.10.7-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --build-arg ARTIFACTORY_REGISTRY=$ARTIFACTORY_REGISTRY \
+                   --build-arg ARTIFACTORY_REPO=$ARTIFACTORY_REPO \
+                   --build-arg ARTIFACTORY_USERNAME=$ARTIFACTORY_USERNAME \
+                   --build-arg ARTIFACTORY_PASSWORD=$ARTIFACTORY_PASSWORD \
+                   -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
+    - docker push $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
+---
+stages:
+  - build
+  - test
+
+variables:
+  ARTIFACTORY_REGISTRY: https://your-artifactory-url/artifactory
+  ARTIFACTORY_REPO: docker-repo
+  ARTIFACTORY_USERNAME: your-artifactory-username
+  ARTIFACTORY_PASSWORD: your-artifactory-password
+
+build:
+  stage: build
+  image: docker:20.10.7
+  services:
+    - docker:20.10.7-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --build-arg ARTIFACTORY_REGISTRY=$ARTIFACTORY_REGISTRY \
+                   --build-arg ARTIFACTORY_REPO=$ARTIFACTORY_REPO \
+                   --build-arg ARTIFACTORY_USERNAME=$ARTIFACTORY_USERNAME \
+                   --build-arg ARTIFACTORY_PASSWORD=$ARTIFACTORY_PASSWORD \
+                   -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
+    - docker push $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
+
+test:
+  stage: test
+  image: ubuntu:20.04
+  script:
+    # Add your mainframe connectivity testing commands here
+    # Example: Test mainframe connectivity with `ping` command
+    - ping your-mainframe-host
+---
+stages:
+  - build
+  - test
+
+variables:
+  ARTIFACTORY_REGISTRY: https://your-artifactory-url/artifactory
+  ARTIFACTORY_REPO: docker-repo
+  ARTIFACTORY_USERNAME: your-artifactory-username
+  ARTIFACTORY_PASSWORD: your-artifactory-password
+
+build:
+  stage: build
+  image: docker:20.10.7
+  services:
+    - docker:20.10.7-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --build-arg ARTIFACTORY_REGISTRY=$ARTIFACTORY_REGISTRY \
+                   --build-arg ARTIFACTORY_REPO=$ARTIFACTORY_REPO \
+                   --build-arg ARTIFACTORY_USERNAME=$ARTIFACTORY_USERNAME \
+                   --build-arg ARTIFACTORY_PASSWORD=$ARTIFACTORY_PASSWORD \
+                   -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
+    - docker push $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
+
+test:
+  stage: test
+  image: ubuntu:20.04
+  script:
+    # Install x3270 (s3270) emulator for mainframe communication
+    - apt-get update
+    - apt-get install -y x3270
+
+    # Assuming you want to connect to a mainframe via TN3270 protocol
+    # Replace 'your-mainframe-host' with the actual hostname or IP address of your mainframe
+    # Replace 'your-mainframe-username' and 'your-mainframe-password' with the appropriate credentials
+    - echo "your-mainframe-host" | s3270 -t "tn3270" -e "ISO8859-1" -r -x -model 2
+    - sleep 1
+    - echo "String(\"your-mainframe-username\n\")"
+    - sleep 1
+    - echo "String(\"your-mainframe-password\n\")"
+    - sleep 1
+    - echo "enter"
+    - sleep 5  # Adjust this sleep time based on how long it takes to log in and verify the connection
+
+    # Add your additional test commands to interact with the mainframe here
+    # For example, you can run mainframe commands, verify responses, etc.
+    - echo "String(\"your-mainframe-command\n\")"
+    - sleep 2
+
+    # Example: Verify a specific string in the mainframe output
+    - echo "Text(*your-expected-string*)" | expect
