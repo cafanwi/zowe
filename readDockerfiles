@@ -67,10 +67,16 @@ FROM ubuntu:latest
 ENV DEBIAN_FRONTEND=noninteractive
 # Update package lists and install necessary packages
 RUN apt-get update && \
-    apt-get install -y curl nodejs npm openjdk-11-jdk apache2
+    apt-get install -y curl nodejs npm openjdk-11-jdk apache2 sudo
 
 # Add a new user named "zoweuser"
 RUN useradd -m -s /bin/bash zoweuser
+
+# Set password for zoweuser (Change this to your desired password)
+RUN echo 'zoweuser:password' | chpasswd
+
+# Add zoweuser to the sudo group
+RUN usermod -aG sudo zoweuser
 
 # Copy the zowe.crt file into the image
 COPY zowe.crt /zowe.crt
@@ -79,9 +85,39 @@ COPY zowe.crt /zowe.crt
 RUN npm install -g @zowe/cli && \
     zowe plugins install @zowe/cics-for-zowe-cli@zowe-v2-lts @zowe/db2-for-zowe-cli@zowe-v2-lts @zowe/ims-for-zowe-cli@zowe-v2-lts @zowe/mq-for-zowe-cli@zowe-v2-lts @zowe/zos-ftp-for-zowe-cli@zowe-v2-lts
 
-# Copy the zowe.crt file to the shared_npm directory
-USER zoweuser
-COPY zowe.crt /shared_npm/zowe.crt
+# Copy the zowe.crt file to the system's CA certificates directory
+USER root
+RUN cp /zowe.crt /usr/local/share/ca-certificates/zowe.crt && \
+    update-ca-certificates
+
+# Configure and start Apache web server
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+EXPOSE 80
+CMD ["apachectl", "-D", "FOREGROUND"]
+#########################################################################
+Only Ubuntu and  Apache server without zowe
+$ Docker build -t cafanwii/ubuntu-apache:1.0.0 .
+$ docker run -itd -p 8082:80 cafanwii/uduntu-apache:1.0.0
+#########################################################################
+
+FROM ubuntu:latest
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+# Update package lists and install necessary packages
+RUN apt-get update && \
+    apt-get install -y curl nodejs npm openjdk-11-jdk apache2 sudo
+
+# Add a new user named "apacheuser"
+RUN useradd -m -s /bin/bash apacheuser
+
+# Set password for apacheuser (Change this to your desired password)
+RUN echo 'apacheuser:password' | chpasswd
+
+# Add apacheuser to the sudo group
+RUN usermod -aG sudo apacheuser
+
+# Copy the zowe.crt file into the image
+COPY zowe.crt /zowe.crt
 
 # Copy the zowe.crt file to the system's CA certificates directory
 USER root
