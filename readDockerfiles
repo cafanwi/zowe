@@ -24,4 +24,35 @@ RUN npm install -g @zowe/cli && \
     zowe plugins install @zowe/cics-for-zowe-cli@zowe-v2-lts @zowe/db2-for-zowe-cli@zowe-v2-lts @zowe/ims-for-zowe-cli@zowe-v2-lts @zowe/mq-for-zowe-cli@zowe-v2-lts @zowe/zos-ftp-for-zowe-cli@zowe-v2-lts
 # Set the default command to start a shell
 CMD ["/bin/bash"]
-##################################---
+##################################
+Adding Cert to the Dockerfile
+##################################
+FROM ubuntu:latest
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+# Update package lists
+RUN apt-get update
+# Install curl
+RUN apt-get install -y curl
+# Install Node.js and npm
+RUN apt-get install -y nodejs npm
+# Install OpenJDK (Java)
+RUN apt-get install -y openjdk-11-jdk
+# Add a new user named "zoweuser"
+RUN useradd -m -s /bin/bash zoweuser
+# Copy the zowe.crt file into the image
+COPY zowe.crt /zowe.crt
+# Install Zowe CLI and plugins
+RUN npm install -g @zowe/cli && \
+    zowe plugins install @zowe/cics-for-zowe-cli@zowe-v2-lts @zowe/db2-for-zowe-cli@zowe-v2-lts @zowe/ims-for-zowe-cli@zowe-v2-lts @zowe/mq-for-zowe-cli@zowe-v2-lts @zowe/zos-ftp-for-zowe-cli@zowe-v2-lts
+# Copy the zowe.crt file to the shared_npm directory
+USER zoweuser
+COPY zowe.crt /shared_npm/zowe.crt
+# Copy the zowe.crt file to the system's CA certificates directory
+USER root
+RUN cp /zowe.crt /usr/local/share/ca-certificates/zowe.crt && \
+    update-ca-certificates
+# Set the default command to start a shell
+USER zoweuser
+# CMD ["/bin/bash"]
+
