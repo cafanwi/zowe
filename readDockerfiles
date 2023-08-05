@@ -1,0 +1,27 @@
+FROM ubuntu:latest
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+# Update package lists
+RUN apt-get update
+# Install curl
+RUN apt-get install -y curl
+# Install Node.js and npm
+RUN apt-get install -y nodejs npm
+# Install OpenJDK (Java)
+RUN apt-get install -y openjdk-11-jdk
+# Add a new user named "zoweuser"
+RUN useradd -m -s /bin/bash zoweuser
+# Set up shared npm directory
+RUN mkdir /shared_npm && chown zoweuser:zoweuser /shared_npm
+# Switch to the new user
+USER zoweuser
+# Set the NPM_CONFIG_PREFIX to use the shared npm directory
+# Add the shared npm directory to PATH
+ENV NPM_CONFIG_PREFIX=/shared_npm
+ENV PATH="$PATH:/shared_npm/bin"  
+# Install Zowe CLI and plugins (as root, but with shared npm directory)
+RUN npm install -g @zowe/cli && \
+    zowe plugins install @zowe/cics-for-zowe-cli@zowe-v2-lts @zowe/db2-for-zowe-cli@zowe-v2-lts @zowe/ims-for-zowe-cli@zowe-v2-lts @zowe/mq-for-zowe-cli@zowe-v2-lts @zowe/zos-ftp-for-zowe-cli@zowe-v2-lts
+# Set the default command to start a shell
+CMD ["/bin/bash"]
+##################################---
