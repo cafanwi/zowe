@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu-apache-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubuntu-apache
+  template:
+    metadata:
+      labels:
+        app: zowe-apache
+    spec:
+      containers:
+        - name: zowe-apache-container
+          image: sosotech/zowe-apache:1.0.0
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always

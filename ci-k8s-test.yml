@@ -1,0 +1,9 @@
+stages:
+  - test
+
+test_cluster_connectivity:
+  stage: test
+  image: bitnami/kubectl:latest
+  script:
+    - kubectl version
+    - kubectl get nodes
