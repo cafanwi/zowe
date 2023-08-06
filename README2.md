@@ -44,5 +44,5 @@ kubectl port-forward service/zowe-apache-service 8080:80
 I just use nodePort and was able to get on localhost
 
 ```
-localhost:56354
+localhost:31354
 ```
