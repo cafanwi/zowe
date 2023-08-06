@@ -1,24 +1,22 @@
 stages:
   - build
 
-variables:
-  ARTIFACTORY_REGISTRY: https://your-artifactory-url/artifactory
-  ARTIFACTORY_REPO: docker-repo
-  ARTIFACTORY_USERNAME: your-artifactory-username
-  ARTIFACTORY_PASSWORD: your-artifactory-password
-
-build:
+build_and_push_image:
   stage: build
-  image: docker:20.10.7
+  image: docker:latest
   services:
-    - docker:20.10.7-dind
+    - docker:dind
+  variables:
+    DOCKER_IMAGE_NAME: "cafanwii/my-image"
+    DOCKER_REGISTRY: "docker.io"
+    # Add other Docker variables here
+
   before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
   script:
-    - docker build --build-arg ARTIFACTORY_REGISTRY=$ARTIFACTORY_REGISTRY \
-                   --build-arg ARTIFACTORY_REPO=$ARTIFACTORY_REPO \
-                   --build-arg ARTIFACTORY_USERNAME=$ARTIFACTORY_USERNAME \
-                   --build-arg ARTIFACTORY_PASSWORD=$ARTIFACTORY_PASSWORD \
-                   -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
-    - docker push $ARTIFACTORY_REGISTRY/$ARTIFACTORY_REPO/zowe-image:latest
+    - docker build -t $DOCKER_IMAGE_NAME .
+    - docker tag $DOCKER_IMAGE_NAME $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE_NAME:$CI_COMMIT_SHA
+  only:
+    - main
+
