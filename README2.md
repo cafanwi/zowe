@@ -46,3 +46,7 @@ I just use nodePort and was able to get on localhost
 ```
 localhost:31354
 ```
+
+###  Automating with GitLab?
+- Save your username and password to the project environment
+  - Use the gitlab-ci.yml script to deploy
