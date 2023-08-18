@@ -1,0 +1,42 @@
+# Use Ubuntu as the base image
+FROM ubuntu:latest
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update package lists and install necessary packages
+RUN apt-get update && \
+    apt-get install -y curl git openjdk-11-jdk unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install GitLab Runner
+RUN curl -LJO "https://gitlab-runner-downloads.s3.amazonaws.com/latest/deb/gitlab-runner_amd64.deb" && \
+    dpkg -i gitlab-runner_amd64.deb && \
+    rm gitlab-runner_amd64.deb
+
+# Install Groovy
+RUN apt-get update && \
+    apt-get install -y groovy && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install dumb-init
+RUN curl -Lo /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && \
+    chmod +x /usr/bin/dumb-init
+
+# Install Gradle
+ENV GRADLE_VERSION=7.3.3
+RUN curl -LJO "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" && \
+    unzip "gradle-${GRADLE_VERSION}-bin.zip" -d /opt && \
+    rm "gradle-${GRADLE_VERSION}-bin.zip"
+
+# Set Gradle environment variables
+ENV GRADLE_HOME=/opt/gradle-${GRADLE_VERSION}
+ENV PATH=$PATH:$GRADLE_HOME/bin
+
+# Set the entry point
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# Set the default command for the container
+CMD ["gitlab-runner", "run", "--user=gitlab-runner", "--working-directory=/home/gitlab-runner"]
