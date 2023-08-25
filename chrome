@@ -1,0 +1,127 @@
+FROM python:3.8
+
+# Copy your certificate file to the container
+COPY chrome.crt /etc/ssl/cert/
+
+# Rest of your installation steps
+RUN apt-get update && \
+    apt-get install -y wget unzip gcc && \
+    pip install selenium xlwt && \
+    echo "installing Chrome" && \
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt install -y ./google-chrome-stable_current_amd64.deb && \
+    CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+    wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip && \
+    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
+    echo "install complete" && \
+    alias ll='ls -l' && \
+    cd /opt && \
+    mkdir dxc_fix && \
+    cd dxc_fix && \
+    sleep infinity
+ 
+
+
+## Use a base image with Python pre-installed
+# FROM python:3.8
+
+# # Install required packages
+# RUN apt-get update && apt-get install -y wget unzip gcc
+
+# # Install Selenium and xlwt
+# RUN pip install selenium xlwt
+
+# # Install Chrome
+# RUN echo "installing Chrome" && \
+#     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+#     apt install -y ./google-chrome-stable_current_amd64.deb
+
+# # Install Chromedriver
+# RUN CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+#     wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip && \
+#     unzip /tmp/chromedriver.zip -d /usr/local/bin/
+
+# # Set alias
+# RUN alias ll='ls -l'
+
+# # Create directory and sleep
+# RUN mkdir -p /opt/dxc_fix
+# WORKDIR /opt/dxc_fix
+# CMD ["sleep", "infinity"]
+
+
+# # Use a Python base image
+# FROM python:3.8
+
+# # Install Chrome dependencies
+# RUN apt-get update && \
+#     apt-get install -y curl unzip && \
+#     curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+#     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+#     apt-get update && \
+#     apt-get install -y google-chrome-stable
+
+# # Install Python dependencies
+# RUN pip install selenium
+
+# # Download Chrome WebDriver and make it executable
+# RUN CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
+#     curl -sS -o /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
+#     unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
+#     chmod +x /usr/local/bin/chromedriver && \
+#     rm /tmp/chromedriver.zip
+
+# # Add your cafanwi.crt file to the image
+# COPY chrome.crt /usr/local/share/ca-certificates/chrome.crt
+# RUN update-ca-certificates
+
+# # Set up a working directory
+# WORKDIR /app
+
+# # Copy your Python script to the container
+# COPY selenium_script.py .
+
+# # Run your Python script that uses Chrome
+# CMD ["python", "selenium_script.py"]
+
+
+# # Use an official Python slim-bullseye base image
+# FROM python:3.9-slim-bullseye
+
+# # Set environment variables
+# ENV PYTHONUNBUFFERED=1
+
+# # Install Chrome and dependencies
+# RUN apt-get update && \
+#     apt-get install -y curl gnupg && \
+#     curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+#     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+#     apt-get update && \
+#     apt-get install -y google-chrome-stable
+
+# # Copy the Chrome certificate to the image
+# COPY chrome.crt /usr/local/share/ca-certificates/
+
+# # Update CA certificates
+# RUN update-ca-certificates
+
+# # Set Chrome as a headless browser
+# ENV CHROME_BIN=/usr/bin/google-chrome-stable
+
+# # Install Selenium
+# RUN pip install selenium
+
+# # Set the working directory
+# WORKDIR /app
+
+# # Copy your Python script to the image
+# COPY selenium_script.py .
+
+# # Optional: You can remove the CMD instruction to prevent automatic execution
+
+# # ... Previous instructions ...
+
+# # Replace the CMD instruction
+# CMD ["tail", "-f", "/dev/null"]
+
+
