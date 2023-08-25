@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selenium-chrome-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: selenium-chrome
+  template:
+    metadata:
+      labels:
+        app: selenium-chrome
+    spec:
+      containers:
+        - name: selenium-chrome
+          image: python:3.8 # or any other base image with Python pre-installed
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "run selenium" &&
+              apt-get update && apt-get install -y wget unzip gcc &&
+              pip install selenium xlwt &&
+              echo "installing Chrome" &&
+              wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&
+              apt install -y ./google-chrome-stable_current_amd64.deb &&
+              CHROME_DRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE) &&
+              wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip &&
+              unzip /tmp/chromedriver.zip -d /usr/local/bin/ &&
+              echo "install complete" &&
+              alias ll='ls -l' &&
+              cd /opt &&
+              mkdir dxc_fix &&
+              cd dxc_fix &&
+              sleep infinity
