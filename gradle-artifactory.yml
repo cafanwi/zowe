@@ -1,0 +1,23 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  # Define your environment-specific variables here
+  ARTIFACTORY_URL: 'https://your-artifactory-url/artifactory'
+  ARTIFACTORY_REPO: 'your-repo-name'
+  GRADLE_USER_HOME: '$CI_PROJECT_DIR/.gradle'  # Set Gradle user home directory
+  GRADLEW: './gradlew'
+
+build_jar:
+  stage: build
+  script:
+    - chmod +x $GRADLEW  # Make Gradle wrapper executable
+    - $GRADLEW clean build  # Replace with your Gradle build command
+
+deploy_to_artifactory:
+  stage: deploy
+  script:
+    - curl -u $ARTIFACTORY_USERNAME:$ARTIFACTORY_PASSWORD -T build/libs/your-jar-file.jar $ARTIFACTORY_URL/$ARTIFACTORY_REPO/path/in/artifactory/your-jar-file.jar
+  only:
+    - master  # Specify the branch you want to trigger this pipeline
