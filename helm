@@ -1,0 +1,26 @@
+# Create a namespace for GitLab Runner (optional)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gitlab-runner
+
+# Add the Helm repository for GitLab Runner
+apiVersion: helm.cattle.io/v1
+kind: HelmChartRepository
+metadata:
+  name: gitlab-runner-repo
+  namespace: gitlab-runner
+spec:
+  url: https://charts.gitlab.io
+
+# Install GitLab Runner with Helm
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: gitlab-runner
+  namespace: gitlab-runner
+spec:
+  chart: gitlab-runner/gitlab-runner
+  values:
+    gitlabUrl: "https://gitlab.com/"  # Replace with your GitLab URL
+    runnerRegistrationToken: "YOUR_REGISTRATION_TOKEN"  # Replace with your registration token
