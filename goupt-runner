@@ -80,6 +80,13 @@ Registration tokens have been deprecated and will be removed in GitLab 17.0.
 
 https://gitlab.com/gitlab-org/charts/gitlab-runner/blob/main/values.yaml
 
+```
+sudo chmod +x /usr/local/bin/gitlab-runner
+gitlab-runner deploy --non-interactive -u https://gitlab.com/ -t "$TOKEN" --executor shell
+```
+
+
+
 
 configure config.toml and restart runner:m  systemctl restart gitlab-runner
 
