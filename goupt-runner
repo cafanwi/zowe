@@ -79,3 +79,6 @@ Registration tokens have been deprecated and will be removed in GitLab 17.0.
 
 
 https://gitlab.com/gitlab-org/charts/gitlab-runner/blob/main/values.yaml
+
+
+configure config.toml and restart runner:m  systemctl restart gitlab-runner
