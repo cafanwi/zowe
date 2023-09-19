@@ -22,3 +22,41 @@ For the executor, enter the type of executor. The executor is the environment wh
 
 https://docs.gitlab.com/ee/ci/runners/runners_scope.html#shared-runners
 https://docs.gitlab.com/runner/install/kubernetes.html
+
+
+```Dockerfile
+# Use a base image of your choice (e.g., Ubuntu)
+FROM ubuntu:latest
+
+# Install required dependencies
+RUN apt-get update && \
+    apt-get install -y curl
+
+# Download and install Helm
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
+    chmod +x get_helm.sh && \
+    ./get_helm.sh
+
+# Clean up unnecessary files
+RUN rm get_helm.sh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set the default entry point to the Helm CLI
+ENTRYPOINT ["helm"]
+```
+
+```yml
+stages:
+  - deploy
+
+variables:
+  HELM_CHART_PATH: /path/to/your/helm/chart
+  VALUES_FILE_PATH: /path/to/your/values.yaml
+
+deploy_to_cluster:
+  image: cafanwii/helm:v1  # Use the name of the Helm image you built
+  stage: deploy
+  script:
+    - helm upgrade --install my-release $HELM_CHART_PATH -f $VALUES_FILE_PATH
+```
