@@ -1,0 +1,33 @@
+data:
+  runner-setup.sh: |
+    #!/bin/sh
+    set -e
+
+    function register {
+        token="$1"
+        gitlab-runner \
+          register \
+          --registration-token="$token" \
+          --env="GITLAB_URL=https://gitlab.com/" \
+          --env="GITLAB_RUNNER_NAME=test-runner-2" \
+          --env="GITLAB_RUNNER_TAGS=test-runner-2" \
+          --env="GITLAB_RUNNER_PRIVILEGED=true" \
+          --env="GITLAB_RUNNER_IMAGE=ubuntu:20.04" \
+          --env="GITLAB_RUNNER_NAMESPACE=gitlab-runner" \
+          --env="GITLAB_RUNNER_SERVICE_ACCOUNT=gitlab-runner" \
+          --env="GITLAB_RUNNER_PULL_POLICY=if-not-present" \
+          --executor=kubernetes \
+          --kubernetes-cpu-limits="" \
+          --kubernetes-cpu-requests=""
+    }
+
+    echo 'concurrent = 30' > /config/config.toml
+    echo 'check_interval = 30' >> /config/config.toml
+    echo 'log_format = "json"' >> /config/config.toml
+
+    for line in $(cat /etc/gitlab-runner/secrets/registration_tokens); do
+        registration_token=$(echo $line | cut -f2 -d=)
+        register "$registration_token"
+    done
+
+    gitlab-runner run
