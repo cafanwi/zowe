@@ -1,0 +1,24 @@
+Create a group runner with a runner authentication token
+Version history 
+Prerequisites:
+
+You must have the Owner role for the group.
+You can create a group runner for your self-managed GitLab instance or for GitLab.com. When you create a runner, it is assigned a runner authentication token that you use to register it. The runner uses the token to authenticate with GitLab when it picks up jobs from the job queue.
+
+To create a group runner:
+
+On the left sidebar, select Search or go to and find your group.
+Select Build > Runners.
+Select New group runner.
+Select the operating system where GitLab Runner is installed.
+In the Tags section, in the Tags field, enter the job tags to specify jobs the runner can run. If there are no job tags for this runner, select Run untagged.
+Optional. In the Runner description field, add a runner description that displays in GitLab.
+Optional. In the Configuration section, add additional configurations.
+Select Create runner.
+Follow the on-screen instructions to register the runner from the command line. When prompted by the command line:
+For the GitLab instance URL, use the URL for your GitLab instance. For example, if your project is hosted on gitlab.example.com/yourname/yourproject, your GitLab instance URL is https://gitlab.example.com.
+For the executor, enter the type of executor. The executor is the environment where the runner executes the job.
+
+
+https://docs.gitlab.com/ee/ci/runners/runners_scope.html#shared-runners
+https://docs.gitlab.com/runner/install/kubernetes.html
