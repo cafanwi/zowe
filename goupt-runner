@@ -76,3 +76,6 @@ runnerRegistrationToken (deprecated in GitLab 15.6):
 The registration token retrieved from your GitLab instance.
 Set the token directly or store it in a secret.
 Registration tokens have been deprecated and will be removed in GitLab 17.0.
+
+
+https://gitlab.com/gitlab-org/charts/gitlab-runner/blob/main/values.yaml
