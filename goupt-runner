@@ -60,3 +60,19 @@ deploy_to_cluster:
   script:
     - helm upgrade --install my-release $HELM_CHART_PATH -f $VALUES_FILE_PATH
 ```
+
+
+Required configuration
+For GitLab Runner to function, your configuration file must specify the following:
+
+gitlabUrl: The GitLab server full URL to register the runner against. For example, https://gitlab.example.com.
+[rbac: { enable: true }:] Create RBAC rules for the GitLab Runner to create pods to run jobs in. If you have an existing serviceAccount you prefer to use, you should also set [rbac: { serviceAccountName: "SERVICE_ACCOUNT_NAME" }.] For more information about the minimal permissions required for the serviceAccount, see Configure runner API permissions.
+runnerToken:
+The authentication token you obtain when you create a runner in the GitLab UI.
+Set the token directly or store it in a secret.
+- or -
+
+runnerRegistrationToken (deprecated in GitLab 15.6):
+The registration token retrieved from your GitLab instance.
+Set the token directly or store it in a secret.
+Registration tokens have been deprecated and will be removed in GitLab 17.0.
