@@ -1,0 +1,41 @@
+stages:
+  - deploy-runner
+
+variables:
+  GITLAB_URL: https://gitlab.com/
+  K8S_NAMESPACE: gitlab-runner
+  K8S_CPU_LIMIT: 500m
+  K8S_CPU_REQUEST: 500m
+
+deploy-runner:
+  stage: deploy-runner
+  image: gitlab/gitlab-runner:latest
+  script:
+    - echo "Runner registration started..."
+    - gitlab-runner register \
+        --non-interactive \
+        --config "/etc/gitlab-runner/config.toml" \
+        --url $GITLAB_URL \
+        --token $CI_JOB_TOKEN \
+        --executor kubernetes \
+        --kubernetes-namespace $K8S_NAMESPACE \
+        --kubernetes-pod-name my-runner \
+        --kubernetes-pod-labels run=gitlab-ci \
+        --kubernetes-service-account-name gitlab-runner \
+        --kubernetes-pod-cpu-limit $K8S_CPU_LIMIT \
+        --kubernetes-pod-cpu-request $K8S_CPU_REQUEST
+    - echo "Runner registered successfully."
+  only:
+    - tags
+  artifacts:
+    paths:
+      - /etc/gitlab-runner/config.toml
+
+before_script:
+  - mkdir -p /etc/gitlab-runner
+  - echo "concurrent = 10" > /etc/gitlab-runner/config.toml
+  - echo "check_interval = 30" >> /etc/gitlab-runner/config.toml
+  - echo "log_format = \"json\"" >> /etc/gitlab-runner/config.toml
+  - echo "listen_address = \":9252\"" >> /etc/gitlab-runner/config.toml
+  - echo "metrics_port = 9252" >> /etc/gitlab-runner/config.toml
+  - echo "log_level = \"info\"" >> /etc/gitlab-runner/config.toml
