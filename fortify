@@ -1,0 +1,74 @@
+# Fortify SCA
+Official Documentation Link: [Here's the Official Documentation Link for Fortify SCA.](https://www.microfocus.com/documentation/fortify-static-code/)
+
+Installation and Usage Guide: [Latest Installation and Usage Guide Link.](https://www.microfocus.com/documentation/fortify-static-code-analyzer-and-tools/2310/LIM_Guide_23.1.0.pdf)
+
+## What is Fortify SCA
+Fortify Static Code Analyzer (SCA) is a powerful and widely used application security tool provided by Micro Focus  that is used to analyzes source code and pinpoints the root cause of security vulnerabilities.
+
+Key features and capabilities of Fortify SCA include:
+
+1. ***Ease with Integrating with Other Fortify Tools:*** Fortify SCA can be integrated with other tools in the Fortify suite, such as Fortify WebInspect (dynamic analysis) and Fortify Software Security Center (for centralized reporting and management).
+
+2. ***Static Application Security Testing (SAST):*** Fortify analyzes and identifies security vulnerabilities, code quality issues, and compliance violations early in the software development lifecycle. 
+
+3. ***Multi Language Support:*** Fortify SCA supports a wide range of programming languages and technologies' including Java, C/C++, .NET, JavaScript, Python, and more.
+
+4. ***Extensive Rule Sets:*** Fortify SCA can detect various security vulnerabilities such as SQL injection, cross-site scripting (XSS), buffer overflows, and many others. We can customize and create our own rules to align with our specific security requirements.
+
+5. ***Integration with Out CICD GitLab Pipeline:*** Fortify SCA integrates will be integrated with our CICD pipeline to enables developers to run security scans directly from their development environment and automates scans as part of the CI/CD process.
+
+6. ***Provides Detailed Reports:*** Fortify SCA generates detailed reports that highlight identified vulnerabilities and provide guidance on how to remediate them. 
+
+7. ***Audit and Compliance:*** Fortify SCA is known to help with industry-specific compliance standards and best practices by identifying coding patterns that violate security guidelines and standards.
+
+8. ***Allows for Customization and Configuration:*** Fortify SCA can be customized to align with our coding standards, policies, and security requirements. This includes configuring which rules are applied and defining custom rules.
+
+9. ***Easy to Scalability:*** Fortify SCA can be used to scan both small and large codebases, making it suitable for projects of various sizes.
+
+## Installation
+Installing Fortify SCA (Static Code Analyzer) as a Docker image 
+see more: [SCA_Install_Help_18.20/index.html](https://www.microfocus.com/documentation/fortify-static-code-analyzer-and-tools/1820/SCA_Install_Help_18.20/index.htm#Install/Install.htm%3FTocPath%3DInstallation%7C_____0)
+
+***NOTE:***  
+Fortify SCA (Static Code Analyzer) is a complex enterprise-level application that typically requires a more detailed installation process, including licensing and configuration. Since Fortify SCA is a proprietary tool, its installation may involve legal agreements, licenses, and access to Fortify's resources, which cannot be directly automated in a Dockerfile.
+
+### About Downloading the Software
+Fortify Static Code Analyzer and Applications is available as a downloadable application or package. For details on how to acquire the software and a license for the Fortify Software, see the Micro Focus Fortify Software System Requirements document.
+
+Releases: [Download the Zip file](https://fortifyapp.com/#download_app) . It automatically detects your OS.
+
+### Docker Image
+dortifydocker/fortify-ci-tools:latest-jdk-8
+
+
+
+```
+docker build -t cafanwii/fortify:v1.0.0 .
+docker run -it --rm cafanwii/fortify:v1.0.0
+```
+
+### Local installation - Linux
+
+./Fortify_SCA_and_Apps_<version>_linux_x64.run --mode text
+
+
+
+### Fortify ScanCentral SAST (fortify-sast-scancentral.yml)
+Perform a comprehensive Static Application Security Testing (SAST) assessment using your on-premises Fortify ScanCentral environment. The fortify-sast-scancentral.yml template uses the Fortify ScanCentral client to prepare a zip file of the project source code and dependencies and then  start a SAST scan in Fortify Software Security Center/ScanCentral using the prepared payload.
+The invocation of the ScanCentral client should be modified to fit each individual project and CI/CD pipeline needs.  Please refer to the following resources for more information on customizing the template:
+
+[ScanCentral documentation](https://www.microfocus.com/documentation/fortify-software-security-center/) 
+
+The template uses a Linux image and does not supoprt preparation of .NET, C/C++, and Swift/Objective-C technologies using ScanCentral. Fortify on-premises customers should utilize Fortify Static Code Analyzer (SCA) to integrate local translation and/or scanning on the GitLab runner.
+Required GitLab CI/CD variables:
+
+$SSC_URL
+$SSC_TOKEN
+
+
+Fortify on Demand DAST (fortify-dast-fod.yml)
+Under construction
+
+Fortify ScanCentarl DAST (fortify-dast-scancentral.yml)
+Under construction
