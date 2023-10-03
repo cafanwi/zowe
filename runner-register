@@ -1,0 +1,50 @@
+# Use Ubuntu as the base image
+FROM ubuntu:latest
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies and GitLab Runner
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh | bash && \
+    apt-get install -y gitlab-runner && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install GitLab Runner
+RUN curl -LJO "https://gitlab-runner-downloads.s3.amazonaws.com/latest/deb/gitlab-runner_amd64.deb" && \
+    dpkg -i gitlab-runner_amd64.deb && \
+    rm gitlab-runner_amd64.deb
+
+# Install Groovy
+RUN apt-get update && \
+    apt-get install -y groovy && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install dumb-init
+RUN curl -Lo /usr/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 && \
+    chmod +x /usr/bin/dumb-init
+
+RUN gitlab-runner register --non-interactive \
+    --url "https://gitlab.com/" \
+    --registration-token "GR13489418SHVtqx4dJUMSuJvR5q8" \
+    --executor "shell" \
+    --name "docker-custom-runner" \
+    --tag-list "docker-custom-runner" \
+    --run-untagged="true" \
+    --locked="false" \
+    --access-level="not_protected"
+
+RUN awk '/token/ {print $3}' /etc/gitlab-runner/config.toml
+
+# Entrypoint
+ENTRYPOINT ["gitlab-runner"]
+CMD ["run", "--user=root", "--working-directory=/home/gitlab-runner"]
+
+# # Set the entry point
+# ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# # Set the default command for the container
+# CMD ["gitlab-runner", "run", "--user=gitlab-runner", "--working-directory=/home/gitlab-runner"]
