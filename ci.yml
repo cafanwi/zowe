@@ -1,0 +1,27 @@
+stages:
+  - mainframe_script
+
+mainframe_job:
+  stage: mainframe_script
+  script:
+    - 'sshpass -p "$MAINFRAME_PASSWORD" ssh -o StrictHostKeyChecking=no -l "$MAINFRAME_USERNAME" "$MAINFRAME_HOST" "cd /sam/easy && ./ssty.sh your_command_here"'
+  only:
+    - master  # Specify the branch to trigger this job (e.g., "master" branch)
+  environment:
+    name: mainframe  # Define the environment name
+  variables:
+    MAINFRAME_USERNAME: "your_mainframe_username"
+    MAINFRAME_PASSWORD: "your_mainframe_password"
+    MAINFRAME_HOST: "your_mainframe_host"
+---
+stages:
+  - mainframe_script
+
+mainframe_job:
+  stage: mainframe_script
+  script:
+    - 'ssh userid@plextst.ca.baba.com "cd /sam/easy && ./ssty.sh your_command_here"'
+  only:
+    - master  # Specify the branch to trigger this job (e.g., "master" branch)
+  environment:
+    name: mainframe  # Define the environment name
