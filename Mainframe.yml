@@ -1,0 +1,14 @@
+stages:
+  - access_mainframe
+
+access_mainframe_job:
+  stage: access_mainframe
+  image: cafanwii/zowe:v1
+  script:
+    - echo "$MAINFRAME_PASSWORD" > ~/.ssh/mainframe_key
+    - chmod 600 ~/.ssh/mainframe_key
+    - ssh -i ~/.ssh/mainframe_key -p "$MAINFRAME_PORT" "$MAINFRAME_USER@$MAINFRAME_HOST"
+  only:
+    - master  # You can specify the branch where you want this to run
+  tags:
+    - your_runner_tag  # Specify your GitLab runner tag if needed
