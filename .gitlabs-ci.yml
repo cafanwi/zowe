@@ -1,0 +1,19 @@
+stages:
+  - build
+
+build:
+  stage: build
+  tags:
+    - (label)  # Replace '(label)' with your actual label
+  script:
+    - echo "$returnStdout: true, script: '/APPS/X030/Z000/ING/build.sh"
+  environment:
+    name: $mfPipe
+  variables:
+    HLQ: "X030T.$mfPipe"
+    BRANCH: "${Branch}"
+    BUILD_TYPE: "{BuildType}"
+    MY_GIT_COMMIT: "${gitvars.GIT_COMMIT}"
+    BUILD_USER: "${buildUserid}"
+  only:
+    - branches  # You can specify branches where this job should run
